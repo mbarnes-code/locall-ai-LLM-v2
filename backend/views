@@ -1,0 +1,12 @@
+from django.http import JsonResponse
+
+# Define your view to return some data
+def get_data(request):
+    # Example response data
+    data = {
+        "message": "Hello from Django API!"
+    }
+
+    # Returning JsonResponse with a 200 OK status by default
+    return JsonResponse(data, status=200)  # You can specify status code explicitly if needed
+#This should work well for your simple API, but as your project grows, you might want to consider organizing views in class-based views (CBVs) or using Django Rest Framework for more structured APIs.

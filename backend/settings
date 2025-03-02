@@ -1,0 +1,78 @@
+import os
+from pathlib import Path
+
+# Base directory path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Static files settings
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Media files settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# SECRET_KEY from environment variable
+SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')  # Use a default for development
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'corsheaders',  # CORS support
+    'rest_framework',  # Django REST framework for APIs
+    # Add any other apps needed for your project
+]
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # CORS middleware to allow cross-origin requests
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# CORS settings to allow frontend to communicate with the backend
+CORS_ALLOWED_ORIGINS = [
+    "http://frontend:3000",  # Adjust this to the React frontend service URL
+]
+
+# For allowing all hosts during development
+ALLOWED_HOSTS = ['*']  # Use with caution in production; specify actual domains in production
+
+# Time zone configuration (optional)
+TIME_ZONE = 'UTC'
+
+# Django Rest Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Adjust based on your API's needs
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # Adjust if using JWT or other methods
+    ],
+}
+
+# Database configuration (using environment variables)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'spellbook_db_test'),  # Database name from env variable
+        'USER': os.getenv('DB_USER', 'test_user'),  # User from env variable
+        'PASSWORD': os.getenv('DB_PASSWORD', 'test_password'),  # Password from env variable
+        'HOST': os.getenv('DB_HOST', 'db'),  # Database host (service name in Docker Compose)
+        'PORT': os.getenv('DB_PORT', '5432'),  # Database port
+    }
+}
+
+# Redis connection (if used)
+REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379')  # Redis service in Docker Compose
+
+# Debugging and Security (keep DEBUG = True during development)
+DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Dynamically set from environment variable

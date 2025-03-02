@@ -1,0 +1,4 @@
+Django>=3.2,<4.0
+djangorestframework   # For creating APIs
+gunicorn              # WSGI server for production
+django-cors-headers   # To allow Cross-Origin requests (for frontend to backend)
