@@ -1,6 +1,10 @@
 # Core FastAPI dependencies
 fastapi==0.110.0
 uvicorn==0.27.1
+authlib==1.2.1  # OAuth support
+slowapi==0.1.9  # Rate limiting middleware
+loguru==0.7.2
+prometheus_client==0.20.0
 
 # Machine Learning / LLM support
 transformers==4.39.0  # If using Hugging Face models
