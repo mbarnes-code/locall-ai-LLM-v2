@@ -107,8 +107,8 @@ services:
 
   redis:
     <<: *light-resources
-    image: redis:latest
-    command: redis-server --requirepass $(cat /run/secrets/redis_password)
+    image: redislabs/redisai
+    command: redis-server --loadmodule /usr/lib/redis/modules/redisai.so
     networks:
       - demo
     secrets:
