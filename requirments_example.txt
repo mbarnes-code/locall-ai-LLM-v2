@@ -1,0 +1,20 @@
+# Core FastAPI dependencies
+fastapi==0.110.0
+uvicorn==0.27.1
+
+# Machine Learning / LLM support
+transformers==4.39.0  # If using Hugging Face models
+torch==2.2.0          # If using PyTorch models
+ollama==0.1.7         # If integrating with Ollama LLMs
+chromadb==0.4.18      # If using ChromaDB for vector storage
+faiss-cpu==1.7.4      # FAISS for efficient similarity search
+
+# Database / Caching
+redis==5.0.1          # Redis client (for caching)
+
+# Networking & API Calls
+requests==2.31.0      # HTTP client for making API requests
+
+# Security & Monitoring
+loguru==0.7.2         # Better logging
+prometheus_client==0.20.0  # Metrics monitoring
