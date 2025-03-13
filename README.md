@@ -9,3 +9,19 @@ Supports LLM inference, ChromaDB, Redis caching, and monitoring.
 ✔ Secrets management using Docker secrets 🛡️
 ✔ Supports both CPU and GPU inference 🎮
 ✔ Remote access via a hosted web server 🌍
+
+🔧 Setup & Installation
+1️⃣ Prerequisites
+  🐳 Docker & Docker Compose installed (Get Docker)
+  ✅ Nvidia GPU (optional, but recommended)
+  🔐 Domain name + SSL certificate (for secure remote access)
+2️⃣ Clone the Repository
+3️⃣ Configure Environment Variables
+4️⃣ Set Up Secrets
+5️⃣ Start Services
+🎯 Future Improvements
+🔹 Add OAuth authentication for the LLM API
+🔹 Implement rate limiting to prevent abuse
+🔹 Improve logging & monitoring
+📜 License
+MIT License. Feel free to use and modify! 😊🚀
