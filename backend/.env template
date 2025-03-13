@@ -1,0 +1,5 @@
+# Secure Django Secret Key
+DJANGO_SECRET_KEY=super-secret-key
+
+# Database Connection (Example: PostgreSQL)
+DATABASE_URL=postgres://user:password@db:5432/mydatabase
