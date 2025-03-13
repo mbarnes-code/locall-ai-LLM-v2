@@ -1,10 +1,16 @@
-﻿# GPU Settings
+# GPU Settings (for Ollama & ML workloads)
 NVIDIA_GPU_MEMORY=20G
 CUDA_MEMORY_FRACTION=0.8
 
-# Service Passwords (escaped special characters)
-REDIS_PASSWORD=(password)
-GRAFANA_ADMIN_PASSWORD=(password)
-N8N_ENCRYPTION_KEY=(password)
-CHROMA_PASSWORD=(password)
-N8N_USER_MANAGEMENT_JWT_SECRET=(password)
+# Secure Service Secrets (store sensitive data in Docker secrets)
+REDIS_PASSWORD=your-secure-redis-password
+GRAFANA_ADMIN_PASSWORD=your-secure-grafana-password
+N8N_ENCRYPTION_KEY=your-strong-encryption-key
+CHROMA_PASSWORD=your-secure-chroma-password
+N8N_USER_MANAGEMENT_JWT_SECRET=your-jwt-secret
+
+# API Security
+LLM_API_KEY=your-secure-llm-api-key
+
+# Networking & Proxy Settings
+PUBLIC_DOMAIN=llm.yourdomain.com  # Change this to your actual domain
