@@ -16,6 +16,8 @@ DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
+INSTALLED_APPS += ['oauth2_provider']
+
 # ✅ CORS (Frontend-Backend Communication)
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,13 +55,14 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[
 
 # ✅ Django Rest Framework Settings
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # ✅ Only authenticated users can access API by default
-    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication', # ✅ Only authenticated users can access API by default
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
 
 # ✅ Database Configuration (PostgreSQL)
 DATABASES = {
