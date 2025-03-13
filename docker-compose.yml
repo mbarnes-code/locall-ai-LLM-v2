@@ -58,6 +58,14 @@ x-resource-configs: &resource-configs
           memory: 1G
 
 services:
+  db_backup:
+    image: postgres:latest
+    command: pg_dump -h db -U user -F c ai_db > /backups/backup.sql
+    volumes:
+      - ./backups:/backups
+    environment:
+      PGPASSWORD: password
+
   nginx-proxy:
     image: nginx:latest
     container_name: nginx-proxy
