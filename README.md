@@ -23,5 +23,9 @@ Supports LLM inference, ChromaDB, Redis caching, and monitoring.
 🔹 Add OAuth authentication for the LLM API
 🔹 Implement rate limiting to prevent abuse
 🔹 Improve logging & monitoring
+🚀 Container Hardening (AppArmor or SELinux)
+🚀 JWT-based User Roles (e.g., Admin vs. Regular User)
+🚀 Multi-LLM Backend (Switch between Ollama, GPT, Claude, etc.)
+🚀 Web Dashboard (Monitor API usage & performance)
 📜 License
 MIT License. Feel free to use and modify! 😊🚀
