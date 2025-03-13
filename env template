@@ -1,0 +1,10 @@
+﻿# GPU Settings
+NVIDIA_GPU_MEMORY=20G
+CUDA_MEMORY_FRACTION=0.8
+
+# Service Passwords (escaped special characters)
+REDIS_PASSWORD=(password)
+GRAFANA_ADMIN_PASSWORD=(password)
+N8N_ENCRYPTION_KEY=(password)
+CHROMA_PASSWORD=(password)
+N8N_USER_MANAGEMENT_JWT_SECRET=(password)
