@@ -96,12 +96,15 @@ services:
       - demo
     volumes:
       - ollama_storage:/root/.ollama
-    environment:
+    environment:    # ✅ AI Performance Optimizations
       - CUDA_VISIBLE_DEVICES=0
       - OLLAMA_CUDA_MALLOC=20GB
       - OLLAMA_CUDA_STREAM_BATCH_SIZE=32
       - OLLAMA_QUANTIZATION=q4_K_M
       - OLLAMA_API_KEY_FILE=/run/secrets/llm_api_key  # Require API key for access
+      - OMP_NUM_THREADS=16  # Optimizes CPU threading
+      - TF_ENABLE_ONEDNN_OPTS=1  # Boosts TensorFlow performance
+      - TORCH_CUDA_ALLOC_CONF=expandable_segments:True  # Prevents CUDA fragmentation
     secrets:
       - llm_api_key
     security_opt:
@@ -112,6 +115,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
 
   redis:
     <<: *light-resources
