@@ -3,22 +3,20 @@ fastapi==0.110.0
 uvicorn==0.27.1
 authlib==1.2.1  # OAuth support
 slowapi==0.1.9  # Rate limiting middleware
-loguru==0.7.2
-prometheus_client==0.20.0
+loguru==0.7.2  # Better logging
+prometheus_client==0.20.0  # Metrics monitoring
+pydantic==2.6.3  # Required for FastAPI request validation
 
 # Machine Learning / LLM support
-transformers==4.39.0  # If using Hugging Face models
-torch==2.2.0          # If using PyTorch models
-ollama==0.1.7         # If integrating with Ollama LLMs
-chromadb==0.4.18      # If using ChromaDB for vector storage
-faiss-cpu==1.7.4      # FAISS for efficient similarity search
+ollama==0.1.7  # Ollama LLM integration
+pymilvus==2.3.2  # Milvus vector database
+faiss-cpu==1.7.4  # FAISS for vector search
 
 # Database / Caching
-redis==5.0.1          # Redis client (for caching)
+redis==5.0.1  # Redis client
+psycopg2-binary==2.9.6  # PostgreSQL driver (Used if Milvus stores metadata in PostgreSQL)
 
-# Networking & API Calls
-requests==2.31.0      # HTTP client for making API requests
-
-# Security & Monitoring
-loguru==0.7.2         # Better logging
-prometheus_client==0.20.0  # Metrics monitoring
+# Task Queuing (Celery)
+celery==5.3.6  # Task scheduling & background jobs
+redis-py==5.0.1  # Redis support for Celery
+flower==2.0.1  # Celery monitoring UI (optional)

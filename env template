@@ -6,7 +6,7 @@ CUDA_MEMORY_FRACTION=0.8
 REDIS_PASSWORD=your-secure-redis-password
 GRAFANA_ADMIN_PASSWORD=your-secure-grafana-password
 N8N_ENCRYPTION_KEY=your-strong-encryption-key
-CHROMA_PASSWORD=your-secure-chroma-password
+milvus_PASSWORD=your-secure-chroma-password
 N8N_USER_MANAGEMENT_JWT_SECRET=your-jwt-secret
 
 # API Security

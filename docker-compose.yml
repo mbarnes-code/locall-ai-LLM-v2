@@ -4,7 +4,7 @@ volumes:
   ollama_storage:
   redis_data:
   grafana_data:
-  chromadb_data:
+  milvus_data:
   faiss_data:
   n8n_storage:
   whisper_data:
@@ -23,8 +23,8 @@ secrets:
     file: ./secrets/redis_password.txt
   grafana_password:
     file: ./secrets/grafana_password.txt
-  chroma_password:
-    file: ./secrets/chroma_password.txt
+  milvus_password:
+    file: ./secrets/milvus_password.txt
   llm_api_key:
     file: ./secrets/llm_api_key.txt  # Secure API key for LLM server
 
