@@ -98,9 +98,11 @@ services:
       - ollama_storage:/root/.ollama
     environment:    # ✅ AI Performance Optimizations
       - CUDA_VISIBLE_DEVICES=0
-      - OLLAMA_CUDA_MALLOC=20GB # drop this to Prevent overflow
+      - OLLAMA_CUDA_MALLOC=20GB # drop this to Prevent overflow. currently keeps 4GB free on a 24GB rtx
       - OLLAMA_USE_CPU_FALLBACK=True  # Enables CPU execution when GPU is busy
-      - OLLAMA_CUDA_STREAM_BATCH_SIZE=32 # could go to 64 to Increase batch size for faster response
+      - OLLAMA_CUDA_STREAM_BATCH_SIZE=64 # could go to 32 to decrease batch size if there are any issues
+      - OLLAMA_MAX_WORKERS=4  # Allows up to 4 AI requests at the same time
+      - OLLAMA_QUEUE_SIZE=10  # Ensures requests wait in queue instead of failing
       - OLLAMA_QUANTIZATION=q4_K_M # Best balance of size & accuracy
       - OLLAMA_API_KEY_FILE=/run/secrets/llm_api_key  # Require API key for access
       - OMP_NUM_THREADS=16  # Optimizes CPU threading
@@ -116,6 +118,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu, utility, compute]
+
 
   redis:
     <<: *light-resources
