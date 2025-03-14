@@ -1,0 +1,70 @@
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from datetime import datetime
+import requests
+import subprocess
+
+# Define the DAG
+dag = DAG(
+    "llm_fine_tuning",
+    start_date=datetime(2024, 1, 1),
+    schedule_interval="0 0 * * *",  # Runs at midnight every day
+    catchup=False  # Prevents running all missed DAGs if restarted
+)
+
+# ✅ Extract Data for Training (From Milvus, APIs, or Files)
+def extract_data():
+    response = requests.get("https://api.example.com/data")  # Example API
+    data = response.json()
+    with open("/airflow_data/raw_data.json", "w") as f:
+        json.dump(data, f)
+    return "Data extracted and saved"
+
+extract_task = PythonOperator(
+    task_id="extract_data",
+    python_callable=extract_data,
+    dag=dag
+)
+
+# ✅ Transform Data (Preprocess for LLM Training)
+def preprocess_data():
+    subprocess.run(["python", "preprocess.py"])  # Runs your preprocessing script
+
+preprocess_task = PythonOperator(
+    task_id="preprocess_data",
+    python_callable=preprocess_data,
+    dag=dag
+)
+
+# ✅ Fine-Tune the LLM Model (Train on Custom Data)
+def train_llm():
+    subprocess.run(["python", "train.py"])  # Runs your training script
+
+train_task = PythonOperator(
+    task_id="train_llm",
+    python_callable=train_llm,
+    dag=dag
+)
+
+# ✅ Save the Trained Model
+def save_model():
+    subprocess.run(["python", "convert_to_gguf.py"])  # Converts to GGUF for Ollama
+
+save_model_task = PythonOperator(
+    task_id="save_model",
+    python_callable=save_model,
+    dag=dag
+)
+
+# ✅ Load Fine-Tuned Model into Ollama
+def load_into_ollama():
+    subprocess.run(["ollama", "create", "my-custom-llm", "./trained_model.gguf"])  # Loads model
+
+load_model_task = PythonOperator(
+    task_id="load_into_ollama",
+    python_callable=load_into_ollama,
+    dag=dag
+)
+
+# ✅ Task Flow (Ensuring Proper Execution Order)
+extract_task >> preprocess_task >> train_task >> save_model_task >> load_model_task

@@ -143,6 +143,25 @@ services:
             - driver: nvidia
               capabilities: [gpu, utility, compute]
 
+  # 🔄 Apache Airflow (ETL for AI Training)
+  airflow:
+    <<: *medium-resources
+    image: apache/airflow:latest
+    container_name: airflow
+    restart: always
+    networks:
+      - demo
+    ports:
+      - "8080:8080"  # Airflow Web UI
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags  # Store AI training pipelines
+      - ./airflow/logs:/opt/airflow/logs  # Store logs
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://user:password@postgres:5432/airflow
+    depends_on:
+      - postgres
+
 
   # 🔁 RedisAI (For AI Task Queues)
   redis:
@@ -182,9 +201,31 @@ services:
       - demo
     volumes:
       - milvus_data:/var/lib/milvus
+    environment:
+      - MILVUS_DB=postgres
+      - MILVUS_POSTGRES_HOST=postgres
+      - MILVUS_POSTGRES_PORT=5432
+      - MILVUS_POSTGRES_USER=user
+      - MILVUS_POSTGRES_PASSWORD=password
     security_opt:
       - no-new-privileges:true
     read_only: false  # Milvus needs write access
+
+  # 🗄️ PostgreSQL (Milvus Metadata Database)
+  postgres:
+    <<: *medium-resources
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    networks:
+      - demo
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=milvus
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+
 
   # ⚡ FAISS (Optimized Vector Search)
   faiss:
