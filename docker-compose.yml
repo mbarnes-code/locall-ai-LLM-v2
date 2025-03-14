@@ -169,19 +169,18 @@ services:
       - REDIS_URL=redis://redis:6379
       - MAX_CONCURRENT_TASKS=3
 
-  # 🔍 ChromaDB (For AI Vector Search)
-  chroma:
-    <<: *medium-resources
-    image: ghcr.io/chroma-core/chroma:latest
-    container_name: chroma
+  milvus:
+    <<: *medium-resources  # Instead of high-resources. increase to high if RAM resources are availible 
+    image: milvusdb/milvus:latest
+    container_name: milvus
     restart: unless-stopped
     networks:
       - demo
-    secrets:
-      - chroma_password
+    volumes:
+      - milvus_data:/var/lib/milvus
     security_opt:
       - no-new-privileges:true
-    read_only: true
+    read_only: false  # Milvus needs write access
 
   # ⚡ FAISS (Optimized Vector Search)
   faiss:
