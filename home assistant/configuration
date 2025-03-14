@@ -1,0 +1,55 @@
+stt:
+  - platform: whisper
+    model: !secret whisper_model  
+    use_gpu: true  # Enables GPU acceleration
+    language: en  # Set to your primary language
+    temperature: 0.2  # Lower = more accurate transcriptions
+    vad_filter: true  # Enables noise reduction
+
+
+# 🔊 Set Up Piper (Text-to-Speech)
+tts:
+  - platform: piper
+    voice: en_US  # Choose the best voice for your setup
+    stream: true  # Enables real-time speech streaming
+    sample_rate: 22050  # Higher values = smoother voice
+    volume: 1.2  # Increases speech loudness
+    speed: 0.9  # Slows down speech slightly for better clarity
+    pitch: 0.8  # Lowers pitch for a more human-like tone
+
+
+wake_word:
+  - platform: openwakeword
+    model: hey_assistant  # Choose a wake word model
+    sensitivity: 0.7  # Adjust detection accuracy
+    use_gpu: true  # Enables faster detection with GPU
+
+rest_command:
+  send_to_n8n:
+    url: !secret n8n_webhook
+    method: post
+    headers:
+      Content-Type: "application/json"
+    payload: '{"text": "{{ states(\'sensor.whisper_transcription\') }}" }'
+  
+  get_ai_response:
+    url: "http://n8n:5678/webhook/voice-ai"
+    method: get
+
+automation:
+  - alias: "Send Voice Command to N8N"
+    trigger:
+      - platform: event
+        event_type: voice_command
+    action:
+      - service: rest_command.send_to_n8n
+
+  - alias: "Speak AI Response"
+    trigger:
+      - platform: state
+        entity_id: sensor.ai_response
+    action:
+      - service: tts.speak
+        data:
+          entity_id: media_player.living_room_speaker
+          message: "{{ states('sensor.ai_response') }}"

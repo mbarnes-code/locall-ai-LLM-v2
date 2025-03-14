@@ -7,6 +7,8 @@ volumes:
   chromadb_data:
   faiss_data:
   n8n_storage:
+  whisper_data:
+  piper_data:
 
 networks:
   demo:
@@ -85,10 +87,24 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      - OLLAMA_HOST=ollama-gpu:11434  # Proxy to LLM server
+      - OLLAMA_HOST=ollama-gpu:11434 # Proxy to LLM server
 
+  # 🏠 Home Assistant (Now Handles Whisper STT & Piper TTS)
+  home-assistant:
+    <<: *medium-resources
+    image: homeassistant/home-assistant:latest
+    container_name: home-assistant
+    restart: always
+    networks:
+      - demo
+    volumes:
+      - ./home-assistant:/config
+    ports:
+      - "8123:8123"
+
+  # 🚀 Ollama (Primary LLM Engine)
   ollama-gpu:
-    <<: [*high-resources]
+    <<: *high-resources
     image: ollama/ollama:latest
     container_name: ollama-gpu
     restart: always
@@ -96,7 +112,7 @@ services:
       - demo
     volumes:
       - ollama_storage:/root/.ollama
-    environment:    # ✅ AI Performance Optimizations
+    environment:
       - CUDA_VISIBLE_DEVICES=0
       - OLLAMA_CUDA_MALLOC=20GB # drop this to Prevent overflow. currently keeps 4GB free on a 24GB rtx
       - OLLAMA_USE_CPU_FALLBACK=True  # Enables CPU execution when GPU is busy
@@ -125,9 +141,9 @@ services:
             - driver: nvidia
               capabilities: [gpu, utility, compute]
 
-
+  # 🔁 RedisAI (For AI Task Queues)
   redis:
-    <<: *light-resources
+    <<: *medium-resources
     image: redislabs/redisai
     command: redis-server --loadmodule /usr/lib/redis/modules/redisai.so
     networks:
@@ -138,7 +154,9 @@ services:
       - no-new-privileges:true
     read_only: true
 
-celery-worker:
+  # 📜 Celery Worker (Processes AI Jobs)
+  celery-worker:
+    <<: *medium-resources
     image: my-ai-worker:latest
     container_name: celery-worker
     restart: always
@@ -149,10 +167,11 @@ celery-worker:
       - demo
     environment:
       - REDIS_URL=redis://redis:6379
-      - MAX_CONCURRENT_TASKS=3  # Limits how many tasks run at once
+      - MAX_CONCURRENT_TASKS=3
 
+  # 🔍 ChromaDB (For AI Vector Search)
   chroma:
-    <<: *high-resources
+    <<: *medium-resources
     image: ghcr.io/chroma-core/chroma:latest
     container_name: chroma
     restart: unless-stopped
@@ -164,6 +183,7 @@ celery-worker:
       - no-new-privileges:true
     read_only: true
 
+  # ⚡ FAISS (Optimized Vector Search)
   faiss:
     <<: *medium-resources
     image: pytorch/pytorch:latest
@@ -175,6 +195,7 @@ celery-worker:
       - no-new-privileges:true
     read_only: true
 
+  # 📊 Grafana (Monitoring)
   grafana:
     <<: *light-resources
     image: grafana/grafana:latest
@@ -188,6 +209,7 @@ celery-worker:
       - no-new-privileges:true
     read_only: true
 
+  # 🔎 cAdvisor (System Monitoring)
   cadvisor:
     <<: *light-resources
     image: gcr.io/cadvisor/cadvisor:v0.47.2

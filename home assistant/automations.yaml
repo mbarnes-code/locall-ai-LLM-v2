@@ -1,0 +1,13 @@
+alias: "AI Voice Assistant"
+trigger:
+  - platform: event
+    event_type: voice_command  # Wake word detected
+action:
+  - service: stt.process
+    data:
+      entity_id: whisper
+  - service: rest_command.send_to_n8n  # Sends text to AI
+  - service: tts.speak
+    data:
+      entity_id: media_player.living_room_speaker
+      message: "{{ states('sensor.ai_response') }}"
