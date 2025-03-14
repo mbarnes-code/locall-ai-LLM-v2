@@ -98,9 +98,10 @@ services:
       - ollama_storage:/root/.ollama
     environment:    # ✅ AI Performance Optimizations
       - CUDA_VISIBLE_DEVICES=0
-      - OLLAMA_CUDA_MALLOC=20GB
-      - OLLAMA_CUDA_STREAM_BATCH_SIZE=32
-      - OLLAMA_QUANTIZATION=q4_K_M
+      - OLLAMA_CUDA_MALLOC=20GB # drop this to Prevent overflow
+      - OLLAMA_USE_CPU_FALLBACK=True  # Enables CPU execution when GPU is busy
+      - OLLAMA_CUDA_STREAM_BATCH_SIZE=32 # could go to 64 to Increase batch size for faster response
+      - OLLAMA_QUANTIZATION=q4_K_M # Best balance of size & accuracy
       - OLLAMA_API_KEY_FILE=/run/secrets/llm_api_key  # Require API key for access
       - OMP_NUM_THREADS=16  # Optimizes CPU threading
       - TF_ENABLE_ONEDNN_OPTS=1  # Boosts TensorFlow performance
@@ -116,7 +117,6 @@ services:
       timeout: 10s
       retries: 3
 
-
   redis:
     <<: *light-resources
     image: redislabs/redisai
@@ -128,6 +128,19 @@ services:
     security_opt:
       - no-new-privileges:true
     read_only: true
+
+celery-worker:
+    image: my-ai-worker:latest
+    container_name: celery-worker
+    restart: always
+    depends_on:
+      - redis
+      - ollama-gpu
+    networks:
+      - demo
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - MAX_CONCURRENT_TASKS=3  # Limits how many tasks run at once
 
   chroma:
     <<: *high-resources
