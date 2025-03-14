@@ -22,3 +22,9 @@ def assign_task(task_description):
     prompt = f"You are a Project Manager AI. Delegate this task: {task_description}"
     worker_response = ask_llm(prompt)
     return worker_response
+
+@app.task
+def generate_daily_report():
+    prompt = "Summarize today's completed tasks and progress updates."
+    report = ask_llm(prompt)
+    return report
