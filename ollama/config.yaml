@@ -1,0 +1,4 @@
+gpu: true  # Ensure models run on GPU
+num_workers: 4  # Allows multiple AI requests in parallel
+max_batch_size: 64  # Optimize batch processing
+model_path: /root/.ollama/models  # Store models persistently

@@ -1,0 +1,23 @@
+# Use the official Ollama base image
+FROM ollama/ollama:latest
+
+# Set working directory
+WORKDIR /ollama
+
+# Copy custom configuration
+COPY config.yaml /root/.ollama/config.yaml
+
+# Preload LLM models (avoids downloading on first run)
+RUN ollama pull mistral:7b
+RUN ollama pull llama3:8b
+
+# Set performance tuning environment variables inside the container
+ENV OMP_NUM_THREADS=16 \
+    TF_ENABLE_ONEDNN_OPTS=1 \
+    TORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+# Expose Ollama's API port
+EXPOSE 11434
+
+# Run Ollama
+CMD ["ollama", "serve"]

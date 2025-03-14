@@ -102,10 +102,10 @@ services:
     ports:
       - "8123:8123"
 
-  # 🚀 Ollama (Primary LLM Engine)
-  ollama-gpu:
+  #  ollama-gpu:
     <<: *high-resources
-    image: ollama/ollama:latest
+    build:
+      context: ./ollama  # Use custom Dockerfile
     container_name: ollama-gpu
     restart: always
     networks:
@@ -114,16 +114,13 @@ services:
       - ollama_storage:/root/.ollama
     environment:
       - CUDA_VISIBLE_DEVICES=0
-      - OLLAMA_CUDA_MALLOC=20GB # drop this to Prevent overflow. currently keeps 4GB free on a 24GB rtx
+      - OLLAMA_CUDA_MALLOC=20GB  # Prevents overflow. Keeps 4GB free on a 24GB RTX
       - OLLAMA_USE_CPU_FALLBACK=True  # Enables CPU execution when GPU is busy
-      - OLLAMA_CUDA_STREAM_BATCH_SIZE=64 # could go to 32 to decrease batch size if there are any issues
+      - OLLAMA_CUDA_STREAM_BATCH_SIZE=64  # Allows better GPU parallelism. Adjust to 32 if needed
       - OLLAMA_MAX_WORKERS=4  # Allows up to 4 AI requests at the same time
       - OLLAMA_QUEUE_SIZE=10  # Ensures requests wait in queue instead of failing
-      - OLLAMA_QUANTIZATION=q4_K_M # Best balance of size & accuracy
+      - OLLAMA_QUANTIZATION=q4_K_M  # Best balance of size & accuracy
       - OLLAMA_API_KEY_FILE=/run/secrets/llm_api_key  # Require API key for access
-      - OMP_NUM_THREADS=16  # Optimizes CPU threading
-      - TF_ENABLE_ONEDNN_OPTS=1  # Boosts TensorFlow performance
-      - TORCH_CUDA_ALLOC_CONF=expandable_segments:True  # Prevents CUDA fragmentation
     secrets:
       - llm_api_key
     security_opt:
@@ -141,6 +138,7 @@ services:
             - driver: nvidia
               capabilities: [gpu, utility, compute]
 
+
   # 🔁 RedisAI (For AI Task Queues)
   redis:
     <<: *medium-resources
@@ -157,7 +155,8 @@ services:
   # 📜 Celery Worker (Processes AI Jobs)
   celery-worker:
     <<: *medium-resources
-    image: my-ai-worker:latest
+    build:
+      context: ./celery-worker  # Use custom Dockerfile
     container_name: celery-worker
     restart: always
     depends_on:
