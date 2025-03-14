@@ -61,14 +61,19 @@ x-resource-configs: &resource-configs
 
 services:
   db_backup:
-    image: postgres:latest
-    command: pg_dump -h db -U user -F c ai_db > /backups/backup.sql
-    volumes:
-      - ./backups:/backups
-    environment:
-      PGPASSWORD: password
+  image: ubuntu
+  container_name: milvus-redis-backup
+  restart: always
+  volumes:
+    - ./backups:/backups
+  networks:
+    - demo
+  command: bash -c "
+    tar -czvf /backups/milvus_backup.tar.gz /var/lib/milvus &&
+    redis-cli --rdb /backups/redis_backup.rdb"
 
-  nginx-proxy:
+
+  nginx-proxy: #  expose AI services via HTTPS for remote/mobile access. (remove if you keep it strictly local)
     image: nginx:latest
     container_name: nginx-proxy
     restart: unless-stopped
